@@ -1,0 +1,14 @@
+Flask
+requests
+nltk
+tensorflow_hub
+scikit_learn
+typing
+gunicorn
+xeger
+tqdm
+pandas
+openpyxl
+sentry-sdk[flask]
+jinja2<=3.0.3
+Werkzeug<=2.0.3

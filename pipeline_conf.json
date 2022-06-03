@@ -1,0 +1,47 @@
+{
+    "services": {
+        "last_chance_service": {
+            "connector": {
+                "protocol": "python",
+                "class_name": "PredefinedTextConnector",
+                "response_text": "Sorry, something went wrong inside. Please tell me, what did you say."
+            },
+            "state_manager_method": "add_bot_utterance_last_chance",
+            "tags": ["last_chance"]
+        },
+        "timeout_service": {
+            "connector": {
+                "protocol": "python",
+                "class_name": "PredefinedTextConnector",
+                "response_text": "Sorry, I need to think more on that. Let's talk about something else."
+            },
+            "state_manager_method": "add_bot_utterance_last_chance",
+            "tags": ["timeout"]
+        },
+        "annotators": {
+            "intent_catcher": {
+                "connector": {
+                    "protocol": "http",
+                    "timeout": 1,
+                    "url": "http://intent-catcher:8014/detect"
+                },
+                "dialog_formatter": "state_formatters.dp_formatters:last_utt_sentseg_segments_dialog",
+                "response_formatter": "state_formatters.dp_formatters:simple_formatter_service",
+                "state_manager_method": "add_annotation"
+            }
+        },
+        "skills": {
+            "skill_sample": {
+                "connector": {
+                    "protocol": "http",
+                    "url": "http://sample-skill:3555/respond"
+                },
+                "dialog_formatter": "state_formatters.dp_formatters:last_utt_annotations",
+                "response_formatter": "state_formatters.dp_formatters:base_response_selector_formatter_service",
+                "state_manager_method": "add_bot_utterance",
+                "previous_services": ["annotators"]
+            }
+        }
+    },
+    "connectors": {}
+}

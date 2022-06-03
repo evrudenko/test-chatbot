@@ -1,0 +1,30 @@
+services:
+  agent:
+    environment:
+      WAIT_HOSTS: "intent-catcher:8014, sample-skill:3555"
+      WAIT_HOSTS_TIMEOUT: ${WAIT_TIMEOUT:-480}
+
+  intent-catcher:
+    env_file: [.env]
+    build:
+      context: ./annotators/IntentCatcher/
+    ports:
+      - 8014:8014
+    command:  python -m flask run -h 0.0.0.0 -p 8014 --without-threads
+    environment:
+      - FLASK_APP=server
+    deploy:
+      resources:
+        limits:
+          memory: 3.5G
+        reservations:
+          memory: 3.5G
+
+  sample-skill:
+    build:
+      context: skills/skill_sample
+    command: gunicorn --workers=1 server:app -b 0.0.0.0:3555 --reload
+    ports:
+      - 3555:3555
+
+version: "3.7"
